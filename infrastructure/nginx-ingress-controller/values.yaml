@@ -1,0 +1,21 @@
+controller:
+  service:
+    type: LoadBalancer 
+    annotations:
+      service.beta.kubernetes.io/linode-loadbalancer-external-throttle: "true"
+
+  replicas: 2
+
+  ingressClassResource:
+    name: nginx 
+    enabled: true
+    default: true 
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    limits:
+      cpu: 500m
+      memory: 500Mi
+
