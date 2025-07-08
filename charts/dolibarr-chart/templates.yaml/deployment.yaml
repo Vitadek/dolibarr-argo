@@ -1,0 +1,162 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dolibarr-chart.fullname" . }}
+  labels:
+    {{- include "dolibarr-chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "dolibarr-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "dolibarr-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "dolibarr-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            # Database Configuration (DB_HOST and DB_PASSWORD come from Secret)
+            - name: DOLI_DB_TYPE
+              value: {{ .Values.database.type | quote }}
+            - name: DOLI_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.existingSecret | quote }}
+                  key: {{ .Values.database.hostSecretKey | quote }}
+            - name: DOLI_DB_HOST_PORT
+              value: {{ .Values.database.port | quote }}
+            - name: DOLI_DB_NAME
+              value: {{ .Values.database.name | quote }}
+            - name: DOLI_DB_USER
+              value: {{ .Values.database.user | quote }}
+            - name: DOLI_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.existingSecret | quote }}
+                  key: {{ .Values.database.secretKey | quote }}
+
+            # Dolibarr General Configuration (URL_ROOT comes from ConfigMap)
+            - name: DOLI_INSTALL_AUTO
+              value: {{ .Values.dolibarrConfig.installAuto | quote }}
+            - name: DOLI_INIT_DEMO
+              value: {{ .Values.dolibarrConfig.initDemo | quote }}
+            - name: DOLI_PROD
+              value: {{ .Values.dolibarrConfig.prod | quote }}
+            - name: DOLI_INSTANCE_UNIQUE_ID
+              value: {{ .Values.dolibarrConfig.instanceUniqueId | quote }}
+            - name: DOLI_URL_ROOT # Fetched from ConfigMap
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.appConfig.configMapName | quote }}
+                  key: {{ .Values.appConfig.urlRootKey | quote }}
+            - name: DOLI_ADMIN_LOGIN
+              value: {{ .Values.dolibarrConfig.adminLogin | quote }}
+            - name: DOLI_ENABLE_MODULES
+              value: {{ .Values.dolibarrConfig.enableModules | quote }}
+            - name: DOLI_COMPANY_NAME
+              value: {{ .Values.dolibarrConfig.companyName | quote }}
+            - name: DOLI_COMPANY_COUNTRYCODE
+              value: {{ .Values.dolibarrConfig.companyCountryCode | quote }}
+
+            # Cron Service
+            - name: DOLI_CRON
+              value: {{ .Values.dolibarrConfig.cron | quote }}
+            - name: DOLI_CRON_KEY
+              value: {{ .Values.dolibarrConfig.cronKey | quote }}
+            - name: DOLI_CRON_USER
+              value: {{ .Values.dolibarrConfig.cronUser | quote }}
+
+            # User/Group IDs
+            - name: WWW_USER_ID
+              value: {{ .Values.dolibarrConfig.wwwUserId | quote }}
+            - name: WWW_GROUP_ID
+              value: {{ .Values.dolibarrConfig.wwwGroupId | quote }}
+
+            # LDAP Configuration
+            - name: DOLI_AUTH
+              value: {{ .Values.ldap.auth | quote }}
+            - name: DOLI_LDAP_HOST
+              value: {{ .Values.ldap.host | quote }}
+            - name: DOLI_LDAP_PORT
+              value: {{ .Values.ldap.port | quote }}
+            - name: DOLI_LDAP_VERSION
+              value: {{ .Values.ldap.version | quote }}
+            - name: DOLI_LDAP_SERVER_TYPE
+              value: {{ .Values.ldap.serverType | quote }}
+            - name: DOLI_LDAP_LOGIN_ATTRIBUTE
+              value: {{ .Values.ldap.loginAttribute | quote }}
+            - name: DOLI_LDAP_DN
+              value: {{ .Values.ldap.dn | quote }}
+            - name: DOLI_LDAP_FILTER
+              value: {{ .Values.ldap.filter | quote }}
+            - name: DOLI_LDAP_BIND_DN
+              value: {{ .Values.ldap.bindDn | quote }}
+            - name: DOLI_LDAP_BIND_PASS
+              value: {{ .Values.ldap.bindPass | quote }}
+            - name: DOLI_LDAP_DEBUG
+              value: {{ .Values.ldap.debug | quote }}
+
+            # PHP INI Settings
+            - name: PHP_INI_DATE_TIMEZONE
+              value: {{ .Values.phpIni.dateTimezone | quote }}
+            - name: PHP_INI_MEMORY_LIMIT
+              value: {{ .Values.phpIni.memoryLimit | quote }}
+            - name: PHP_INI_UPLOAD_MAX_FILESIZE
+              value: {{ .Values.phpIni.uploadMaxFilesize | quote }}
+            - name: PHP_INI_POST_MAX_SIZE
+              value: {{ .Values.phpIni.postMaxSize | quote }}
+            - name: PHP_INI_ALLOW_URL_FOPEN
+              value: {{ .Values.phpIni.allowUrlFopen | quote }}
+
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: dolibarr-data
+              mountPath: /var/www/html/documents
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: dolibarr-data
+          persistentVolumeClaim:
+            claimName: {{ include "dolibarr-chart.fullname" . }}-pvc
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
