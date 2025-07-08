@@ -1,5 +1,7 @@
 # charts/dolibarr-chart/values.yaml
 replicaCount: 1
+nameOverride: "" 
+fullnameOverride: "" 
 image:
   repository: dolibarr/dolibarr                   
   pullPolicy: IfNotPresent                        
