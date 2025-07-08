@@ -59,7 +59,7 @@ database:
   type: mysqli
   port: 42069
   name: dolidb
-  user: dolidbuser
+  user: dolibarr_user
   existingSecret: dolibarr-db-secret
   secretKey: db-password
   hostSecretKey: db-host
