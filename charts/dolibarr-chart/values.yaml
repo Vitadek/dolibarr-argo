@@ -38,7 +38,8 @@ persistence:
   storageClassName: linode-block-storage-retain
 
 appConfig: 
-  configMapName: dolibarr-app-config   ingressHostKey: ingress-host       
+  configMapName: dolibarr-app-config   
+  ingressHostKey: ingress-host       
   urlRootKey: dolibarr-url-root      
 
 dolibarrConfig:
