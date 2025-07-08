@@ -34,16 +34,25 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          {{- with .Values.securityContext }}
-          securityContext:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
+          volumeMounts: 
+            - name: dolibarr-data 
+              mountPath: /var/www/html/documents 
+      volumes: 
+        - name: dolibarr-data 
+          persistentVolumeClaim:
+            claimName: {{ include "dolibarr-chart.fullname" . }}-pvc 
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
           env:
             # Database Configuration (DB_HOST and DB_PASSWORD come from Secret)
             - name: DOLI_DB_TYPE
