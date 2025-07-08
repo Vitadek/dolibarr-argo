@@ -1,0 +1,34 @@
+# charts/dolibarr-chart/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "dolibarr-chart.fullname" . }}
+  labels:
+    {{- include "dolibarr-chart.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  rules:
+    {{- if .Values.ingress.host }} # Only create the rule if a host is specified
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          {{- range .Values.ingress.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "dolibarr-chart.fullname" . }}
+                port:
+                  name: http # Ensure your Dolibarr Service has a port named 'http' or use the number {{ .Values.service.port }}
+          {{- end }}
+    {{- end }} # End of .Values.ingress.host if condition
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- toYaml .Values.ingress.tls | nindent 4 }}
+  {{- end }}
