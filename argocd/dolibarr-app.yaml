@@ -1,0 +1,33 @@
+# argocd/dolibarr-app.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dolibarr
+  namespace: argocd
+spec:
+  destination:
+    namespace: dolibarr
+    server: https://kubernetes.default.svc
+  source:
+    path: charts/dolibarr-chart
+    repoURL: https://github.com/Vitadek/dolibarr-argo.git
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+        - name: ingress.host
+          value: "dolibarr-hidoe.powerstech.dev"
+  project: dolibarr
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
+        maxDuration: 3m0s
+        factor: 2
+    syncOptions:
+      - CreateNamespace=true

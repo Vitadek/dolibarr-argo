@@ -14,7 +14,10 @@ spec:
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
   rules:
-    {{- if .Values.ingress.host }} # Only create the rule if a host is specified
+    # The 'host' must be a string literal in the Ingress resource.
+    # It cannot directly pull from a ConfigMap/Secret using valueFrom.
+    # We'll pull it from values.yaml (which is then managed by Argo CD parameters).
+    {{- if .Values.ingress.host }} # This condition ensures the rule is only created if host is provided
     - host: {{ .Values.ingress.host | quote }}
       http:
         paths:
@@ -25,7 +28,7 @@ spec:
               service:
                 name: {{ include "dolibarr-chart.fullname" . }}
                 port:
-                  name: http # Ensure your Dolibarr Service has a port named 'http' or use the number {{ .Values.service.port }}
+                  name: http # Ensure your Dolibarr Service's port is named 'http' or use the number {{ .Values.service.port }}
           {{- end }}
     {{- end }} # End of .Values.ingress.host if condition
   {{- if .Values.ingress.tls }}
