@@ -1,4 +1,4 @@
-# charts/dolibarr-chart/templates/ingress.yaml
+{{- if .Values.ingress.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -10,28 +10,34 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if .Values.ingress.className }}
-  ingressClassName: {{ .Values.ingress.className }}
+  {{- with .Values.ingress.className }}
+  ingressClassName: {{ . }}
   {{- end }}
-  rules:
-    # The 'host' must be a string literal in the Ingress resource.
-    # It cannot directly pull from a ConfigMap/Secret using valueFrom.
-    # We'll pull it from values.yaml (which is then managed by Argo CD parameters).
-    {{- if .Values.ingress.host }} # This condition ensures the rule is only created if host is provided
-    - host: {{ .Values.ingress.host | quote }}
-      http:
-        paths:
-          {{- range .Values.ingress.paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
-            backend:
-              service:
-                name: {{ include "dolibarr-chart.fullname" . }}
-                port:
-                  name: http # Ensure your Dolibarr Service's port is named 'http' or use the number {{ .Values.service.port }}
-          {{- end }}
-    {{- end }} # End of .Values.ingress.host if condition
   {{- if .Values.ingress.tls }}
   tls:
-    {{- toYaml .Values.ingress.tls | nindent 4 }}
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
   {{- end }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- with .pathType }}
+            pathType: {{ . }}
+            {{- end }}
+            backend:
+              service:
+                name: {{ include "dolibarr-chart.fullname" $ }}
+                port:
+                  number: {{ $.Values.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}

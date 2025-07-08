@@ -1,83 +1,119 @@
-# charts/dolibarr-chart/values.yaml
-replicaCount: 1
-nameOverride: "" 
-fullnameOverride: "" 
-image:
-  repository: dolibarr/dolibarr                   
-  pullPolicy: IfNotPresent                        
-  tag: "19"                                       
-                                                  
-service:                                                                                                                                                        
-  type: ClusterIP                                 
-  port: 80                                        
-                                                  
-ingress:                                          
-  enabled: true                                   
-  className: "nginx"                              
-  host: dolibarr-hidoe.powerstech.dev
-  paths:                                                                                            
-    - path: /                                                     
-      pathType: Prefix                            
-  # tls:                                          
-  #   - hosts:                                    
-  #       - dolibarr.YOUR_DOMAIN.com              
-  #     secretName: dolibarr-tls-secret                                                             
-                                                                                                    
-database:                                                                                           
-  type: mysqli                                                                                      
-  port: 3306                                                                                        
-  name: dolidb                                                                                      
-  user: dolidbuser                                                                                  
-  existingSecret: dolibarr-db-secret              
-  secretKey: db-password                                                                            
-  hostSecretKey: db-host                          
-                                                                                                    
-persistence:                                      
-  enabled: true                                                                                     
-  size: 5Gi                                                                                                                          
-  storageClassName: linode-block-storage-retain                                                     
-                                                                                                    
-appConfig:                                                                                                                                                                                              
-  configMapName: dolibarr-app-config                                                                                                 
-  ingressHostKey: ingress-host                                                                      
-  urlRootKey: dolibarr-url-root                                                                     
-                                                                                                    
-dolibarrConfig:                                                                                     
-  installAuto: "1"                                                                                  
-  initDemo: "0"                                                   
-  prod: "1"                                                                                                                          
-  companyName: ""                                                 
-  companyCountryCode: ""                                                                                                             
-  instanceUniqueId: ""                                                                                                               
-  adminLogin: "admin"                                                                                                                                                                                                                                                     
-  enableModules: "Societe,Facture,Stock"                          
-  cron: "0"                                                                                                                          
-  cronKey: "mycronsecurekey"                                                                                                         
-  cronUser: ""                                                                                                                       
-  wwwUserId: ""                                                                                                                      
-  wwwGroupId: ""                                                                                                                     
-                                                                                                                                                                
-ldap:                                                                                                                                                           
-  auth: "dolibarr"                                                                                                                                              
-  host: "127.0.0.1"                                                                                                                                             
-  port: 389                                                                     
-  version: "3"                                                                                                                                                  
-  serverType: "openldap"                                                        
-  loginAttribute: "uid"                                                                                                                                         
-  dn: "ou=users,dc=my-domain,dc=com"                                            
-  filter: ""                                                                                                                                                    
-  bindDn: ""                                                                    
-  bindPass: ""                                                                                                                                                  
-  debug: "false"                                                                                                                                                
-                                                                                                                                                                                                                                                                                                                                
-phpIni:                                                                         
-  dateTimezone: "UTC"                                                                                                                                           
-  memoryLimit: "256M"                                                                                                                                           
-  uploadMaxFilesize: "2M"                                                                                                                                       
-  postMaxSize: "8M"                                                                                                                                             
-  allowUrlFopen: "0"                                                                                                                                            
 
-resources: {}                                                                                                                        
-nodeSelector: {}                                                                                                                     
-tolerations: []                                                                                                                      
-affinity: {}          
+replicaCount: 1
+
+image:
+  repository: dolibarr/dolibarr
+  pullPolicy: IfNotPresent
+  tag: "19"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: dolibarr-hidoe.powerstech.dev
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+database:
+  type: mysqli
+  port: 3306
+  name: dolidb
+  user: dolidbuser
+  existingSecret: dolibarr-db-secret
+  secretKey: db-password
+  hostSecretKey: db-host
+
+persistence:
+  enabled: true
+  size: 5Gi
+  StorageClassName: linode-block-storage-retain
+
+appConfig:
+  configMapName: dolibarr-app-config
+  ingressHostKey: ingress-host
+  urlRootKey: dolibarr-url-root
+
+phpIni:
+  dateTimezone: "HST"
+  memoryLimit: "256M"
+  uploadMaxFilesize: "2M"
+  postMaxSize: "8M"
+  allowUrlFopen: "0"
+
+ldap:
+  auth: "dolibarr"
+  host: "127.0.0.1"
+  port: 389
+  version: "3"
+  serverType: "openldap"
+  loginAttribute: "uid"
+  dn: "ou=users,dc=my-domain,dc=com"
+  filter: ""
+  bindDn: ""
+  bindPass: ""
+  debug: "false"
+
+dolibarrConfig:
+  installAuto: "1"
+  initDemo: "0"
+  prod: "1"
+  companyName: ""
+  companyCountryCode: ""
+  instanceUniqueId: ""
+  adminLogin: "admin"
+  enableModules: "Societe,Facture,Stock"
+  cron: "0"
+  cronKey: "mycronsecurekey"
+  cronUser: ""
+  wwwUserId: ""
+
+volumes: []
+
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

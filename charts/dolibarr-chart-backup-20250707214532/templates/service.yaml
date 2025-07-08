@@ -8,8 +8,8 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: http # This matches the 'http' name in your Deployment's container port
       protocol: TCP
-      name: http
+      name: http # Important: The Ingress resource looks for a named port like this
   selector:
     {{- include "dolibarr-chart.selectorLabels" . | nindent 4 }}
