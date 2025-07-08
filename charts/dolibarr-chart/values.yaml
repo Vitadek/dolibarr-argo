@@ -57,7 +57,7 @@ autoscaling:
 
 database:
   type: mysqli
-  port: 42069
+  port: 3306
   name: dolidb
   user: dolidbuser
   existingSecret: dolibarr-db-secret
