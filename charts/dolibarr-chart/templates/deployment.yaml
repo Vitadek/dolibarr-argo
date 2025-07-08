@@ -36,25 +36,6 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}" 
           imagePullPolicy: {{ .Values.image.pullPolicy }} 
-          volumeMounts: 
-            - name: dolibarr-data 
-              mountPath: /var/www/html/documents 
-      volumes: 
-        - name: dolibarr-data 
-          persistentVolumeClaim:
-            claimName: {{ include "dolibarr-chart.fullname" . }}-pvc 
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
           env:
             # Database Configuration (DB_HOST and DB_PASSWORD come from Secret)
             - name: DOLI_DB_TYPE
@@ -174,6 +155,25 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          volumeMounts: 
+            - name: dolibarr-data 
+              mountPath: /var/www/html/documents 
+      volumes: 
+        - name: dolibarr-data 
+          persistentVolumeClaim:
+            claimName: {{ include "dolibarr-chart.fullname" . }}-pvc 
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
