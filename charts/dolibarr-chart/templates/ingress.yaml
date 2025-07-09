@@ -9,37 +9,35 @@ metadata:
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  # You had a duplicate annotations block, remove it if it's not needed:
-  # cert-manager.io/cluster-issuer: {{ .Values.ingress.certManagerClusterIssuer | quote }} # This specific annotation should be part of the above annotations block if it exists
 spec:
   {{- with .Values.ingress.className }}
   ingressClassName: {{ . }}
   {{- end }}
-  {{- if .Values.ingress.tls }} # This checks if the 'tls' block is present in values.yaml
+  {{- if .Values.ingress.tls }}
   tls:
-    {{- range .Values.ingress.tls }} # This loops through each TLS entry in values.yaml
+    {{- range .Values.ingress.tls }}
     - hosts:
-        {{- range .hosts }} # This loops through each host in the current TLS entry
+        {{- range .hosts }}
         - {{ . | quote }}
         {{- end }}
       secretName: {{ .secretName }}
-    {{- end }} # Closes range .Values.ingress.tls
-  {{- end }} # Closes if .Values.ingress.tls
+    {{- end }}
+  {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }} # This loops through each host entry in values.yaml
+    {{- range .Values.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
-          {{- range .paths }} # This loops through each path for the current host
+          {{- range .paths }}
           - path: {{ .path }}
-            {{- with .pathType }} # This checks if pathType is defined
+            {{- with .pathType }}
             pathType: {{ . }}
-            {{- end }} # Closes with .pathType
+            {{- end }}
             backend:
               service:
                 name: {{ include "dolibarr-chart.fullname" $ }}
                 port:
                   number: {{ $.Values.service.port }}
-          {{- end }} 
-    {{- end }} 
-{{- end }} 
+          {{- end }}
+    {{- end }}
+{{- end }}
