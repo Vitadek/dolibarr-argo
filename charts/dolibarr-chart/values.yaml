@@ -102,7 +102,7 @@ ldap:
 dolibarrConfig:
   installAuto: "1"
   initDemo: "0"
-  prod: "1"
+  prod: "0"
   companyName: ""
   companyCountryCode: ""
   instanceUniqueId: ""
