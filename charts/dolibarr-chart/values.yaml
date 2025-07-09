@@ -41,7 +41,7 @@ ingress:
   tls:
     - hosts:
         - dolibarr.yourdomain.com
-      secretName: dolibarr-tls-secret
+      secretName: dolibarr-hidoe-tls
 
 resources: {}
 
