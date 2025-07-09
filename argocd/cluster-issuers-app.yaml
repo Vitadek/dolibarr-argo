@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager-config 
+  namespace: argocd
+spec:
+  project: dolibarr
+  source:
+    repoURL: https://github.com/Vitadek/dolibarr-argo.git 
+    targetRevision: HEAD
+    path: certs # My git dir that has my issuer manifest
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ingress-nginx 
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
