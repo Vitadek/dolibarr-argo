@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: dolibarr-hidoe-tls # The name of the Kubernetes Secret that will store the certificate
+  namespace: ingress-nginx # IMPORTANT: The namespace where your Ingress/application is deployed
+spec:
+  secretName: dolibarr-hidoe-tls # This MUST match the 'tls.secretName' in your Ingress manifest
+  duration: 2160h # 90d 
+  renewBefore: 360h # 15 days in case anything hits the fan
+  issuerRef:
+    name: letsencrypt-prod # 
+    kind: ClusterIssuer 
+  dnsNames:
+    - dolibarr-hidoe.powerstech.dev 
