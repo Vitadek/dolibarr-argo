@@ -30,13 +30,18 @@ service:
 ingress:
   enabled: true
   className: "nginx"
-  annotations: {}
+  certManagerClusterIssuer: "letsencrypt-prod"
+  annotations: 
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hosts:
     - host: dolibarr-hidoe.powerstech.dev
       paths:
         - path: /
           pathType: Prefix
-  tls: []
+  tls:
+    - hosts:
+        - dolibarr.yourdomain.com
+      secretName: dolibarr-tls-secret
 
 resources: {}
 
