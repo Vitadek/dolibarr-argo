@@ -5,7 +5,7 @@ metadata:
 spec:
   acme:
     email: diego.uy@powerstech.io
-    server: https://acme-staging-v02.api.letsencrypt.org/directory 
+    server: https://acme-v02.api.letsencrypt.org/directory 
       #real https://acme-v02.api.letsencrypt.org/directory 
     privateKeySecretRef:
       name: letsencrypt-prod-account-key
