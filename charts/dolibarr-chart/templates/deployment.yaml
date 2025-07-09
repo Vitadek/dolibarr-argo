@@ -46,6 +46,10 @@ spec:
               containerPort: 80
               protocol: TCP
           env: # <<< THIS ENV BLOCK WILL NOW BE CORRECTLY INJECTED
+            {{- if .Values.database.ssl.enabled }}
+            - name: MYSQL_SSL_CA
+              value: "/etc/ssl/certs/mariadb-ca.pem"
+            {{-end}}
             # Database Configuration (DB_HOST and DB_PASSWORD come from Secret)
             - name: DOLI_DB_TYPE
               value: {{ .Values.database.type | quote }}

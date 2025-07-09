@@ -68,6 +68,10 @@ database:
   existingSecret: dolibarr-db-secret
   secretKey: db-password
   hostSecretKey: db-host
+  ssl:
+    enabled: true
+    caSecretName: mariadb-ca-cert
+    caSecretKey: ca.pem
 
 persistence:
   enabled: true
