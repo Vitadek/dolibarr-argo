@@ -6,9 +6,11 @@ metadata:
   labels:
     {{- include "dolibarr-chart.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
-  annotations:
+  annotations: # <--- ADD/MODIFY THIS SECTION
+    {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- end }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.certManagerClusterIssuer | quote }} 
 spec:
   {{- with .Values.ingress.className }}
   ingressClassName: {{ . }}
