@@ -1,0 +1,55 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd 
+spec:
+  project: dolibarr
+  source:
+    repoURL: https://charts.jetstack.io 
+    targetRevision: v1.18.2 # Current as of 2 July 2026
+    chart: cert-manager 
+    helm:
+      values: | # You can provide custom values here
+        installCRDs: true # Crucial for cert-manager
+        replicaCount: 2
+        webhook:
+          replicaCount: 3
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        webhook:
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+        cainjector:
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+        global:
+          leaderElection:
+            namespace: cert-manager
+        ingressShim:
+            defaultIssuerName: letsencrypt-prod # Your default ClusterIssuer name
+            defaultIssuerKind: ClusterIssuer 
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager 
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
