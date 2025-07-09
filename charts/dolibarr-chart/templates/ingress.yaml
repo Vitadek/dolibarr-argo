@@ -1,4 +1,4 @@
-{{- if .Values.ingress.enabled -}}
+# charts/dolibarr-chart/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -6,40 +6,40 @@ metadata:
   labels:
     {{- include "dolibarr-chart.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
-  annotations: # <--- ADD/MODIFY THIS SECTION
-    {{- with .Values.ingress.annotations }}
+  annotations:
     {{- toYaml . | nindent 4 }}
-    {{- end }}
-    cert-manager.io/cluster-issuer: {{ .Values.ingress.certManagerClusterIssuer | quote }} 
+  {{- end }}
+  # You had a duplicate annotations block, remove it if it's not needed:
+  # cert-manager.io/cluster-issuer: {{ .Values.ingress.certManagerClusterIssuer | quote }} # This specific annotation should be part of the above annotations block if it exists
 spec:
   {{- with .Values.ingress.className }}
   ingressClassName: {{ . }}
   {{- end }}
-  {{- if .Values.ingress.tls }}
+  {{- if .Values.ingress.tls }} # This checks if the 'tls' block is present in values.yaml
   tls:
-    {{- range .Values.ingress.tls }}
+    {{- range .Values.ingress.tls }} # This loops through each TLS entry in values.yaml
     - hosts:
-        {{- range .hosts }}
+        {{- range .hosts }} # This loops through each host in the current TLS entry
         - {{ . | quote }}
         {{- end }}
       secretName: {{ .secretName }}
-    {{- end }}
-  {{- end }}
+    {{- end }} # Closes range .Values.ingress.tls
+  {{- end }} # Closes if .Values.ingress.tls
   rules:
-    {{- range .Values.ingress.hosts }}
+    {{- range .Values.ingress.hosts }} # This loops through each host entry in values.yaml
     - host: {{ .host | quote }}
       http:
         paths:
-          {{- range .paths }}
+          {{- range .paths }} # This loops through each path for the current host
           - path: {{ .path }}
-            {{- with .pathType }}
+            {{- with .pathType }} # This checks if pathType is defined
             pathType: {{ . }}
-            {{- end }}
+            {{- end }} # Closes with .pathType
             backend:
               service:
                 name: {{ include "dolibarr-chart.fullname" $ }}
                 port:
                   number: {{ $.Values.service.port }}
-          {{- end }}
-    {{- end }}
-{{- end }}
+          {{- end }} 
+    {{- end }} 
+{{- end }} 
