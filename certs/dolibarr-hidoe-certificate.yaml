@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: dolibarr-hidoe-tls # The name of the Kubernetes Secret that will store the certificate
-  namespace: ingress-nginx # IMPORTANT: The namespace where your Ingress/application is deployed
+  namespace: dolibarr
 spec:
   secretName: dolibarr-hidoe-tls # This MUST match the 'tls.secretName' in your Ingress manifest
   duration: 2160h # 90d 
