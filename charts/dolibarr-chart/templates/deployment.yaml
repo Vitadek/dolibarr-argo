@@ -158,6 +158,8 @@ spec:
           volumeMounts: # There should only be ONE volumeMounts block here
             - name: dolibarr-data
               mountPath: /var/www/html/documents
+            - name: dolibarr-custom
+              mountPath: /var/www/html/custom
       volumes: # This 'volumes' block should be at the same level as 'containers'
         - name: dolibarr-data
           persistentVolumeClaim:
