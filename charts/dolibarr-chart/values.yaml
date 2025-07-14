@@ -48,16 +48,16 @@ resources: {}
 
 livenessProbe:
   httpGet:
-    path: /
+    path: /index.html
     port: http
-  initialDelaySeconds: 30
+  initialDelaySeconds: 15
   preiodSeconds: 10
   timeoutSeconds: 5
 readinessProbe:
   httpGet:
-    path: /
+    path: /index.html
     port: http
-  initialDelaySeconds: 45
+  initialDelaySeconds: 30
   preiodSeconds: 10
   timeoutSeconds: 5
 
