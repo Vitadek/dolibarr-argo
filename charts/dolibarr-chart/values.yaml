@@ -4,7 +4,7 @@ replicaCount: 1
 image:
   repository: dolibarr/dolibarr
   pullPolicy: IfNotPresent
-  tag: "19"
+  tag: "21.0.1"
 
 imagePullSecrets: []
 nameOverride: ""
