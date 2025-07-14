@@ -49,16 +49,14 @@ resources: {}
 livenessProbe:
   httpGet:
     path: /
-    port: 443
-    scheme: HTTPS
+    port: http
   initialDelaySeconds: 30
   preiodSeconds: 10
   timeoutSeconds: 5
 readinessProbe:
   httpGet:
     path: /
-    port: 443
-    scheme: HTTPS
+    port: http
   initialDelaySeconds: 45
   preiodSeconds: 10
   timeoutSeconds: 5
