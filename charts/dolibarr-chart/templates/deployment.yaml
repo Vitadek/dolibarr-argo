@@ -146,14 +146,14 @@ spec:
             - name: PHP_INI_ALLOW_URL_FOPEN
               value: {{ .Values.phpIni.allowUrlFopen | quote }}
 
-          {{- with .Values.livenessProbe }}
-          livenessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.readinessProbe }}
-          readinessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+                #          {{- with .Values.livenessProbe }}
+                #          livenessProbe:
+                #            {{- toYaml . | nindent 12 }}
+                #          {{- end }}
+                #          {{- with .Values.readinessProbe }}
+                #          readinessProbe:
+                #            {{- toYaml . | nindent 12 }}
+                #          {{- end }}
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
