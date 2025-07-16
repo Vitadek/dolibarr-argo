@@ -44,7 +44,7 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           {{- if .Values.keepAlive }}
-          command: ["/bin/sh","-c"]
+          command: ["/bin/bash","-c"]
           args:
             - echo "Debugging enabled, sleeping forever..."; sleep infinity;
           {{- end }}
