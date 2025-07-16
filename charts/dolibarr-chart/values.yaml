@@ -3,6 +3,28 @@ replicaCount: 1
 
 keepAlive: true #pod will stay alive even after dolibarr crashes
 
+initContainers:
+  enabled: true # the initcontainer will run before the pod fully deploys. Can be turned off/on by setting true/false. Modify deployment.yaml for more granularity.
+  commmand: |
+    echo "initContainers is set to true in values.yaml..."
+    echo "Copying var/www/html before the pod fully stands up..."
+    echo "Grabbing the file and placing into /data/var-www-html.tar.gz now..."
+    wget -O /data/var-www-html.tar.gz https://github.com/Vitadek/dolibarr-argo/raw/refs/heads/main/data/var-www-html/dolibarr-html.tar.gz &&
+    if [[ $? != 0 ]]; then
+      echo "Failed to grab the file!"
+    fi
+    echo "Successfully grabbed, extracting file into /var/www/html"
+    tar -xvf /data/files.tar.gz -C /var/www/html
+    if [[ $? != 0 ]]; then
+      echo "Failed to extract the tarball!"
+    fi
+    echo "Extracted into /var/www/html succesfully, cleaning up now" 
+    rm -f /data/var-www-html.tar.gz
+    if [[ $? != 0 ]]; then
+      echo "Failed to clean!"
+    fi
+    echo "File setup complete. initContainer says sayoonara. Spinning up pod now..." 
+
 image:
   repository: dolibarr/dolibarr
   pullPolicy: IfNotPresent

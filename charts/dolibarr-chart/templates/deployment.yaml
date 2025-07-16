@@ -170,6 +170,13 @@ spec:
         - name: dolibarr-data
           persistentVolumeClaim:
             claimName: {{ include "dolibarr-chart.fullname" . }}-pvc
+      initContainers: 
+        - name: var-www-html-setup
+          image: busybox:latest
+          command: ["/bin/bash", "-c"] #Thank God this container comes with bash
+          args:
+            - |-
+{{ .Values.initContainers.command | indent 14 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
