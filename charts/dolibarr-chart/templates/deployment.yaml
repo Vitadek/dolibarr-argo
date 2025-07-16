@@ -173,7 +173,7 @@ spec:
       {{- if .Values.initContainers.enabled }}
       initContainers: 
         - name: var-www-html-setup
-          image: busybox:latest
+          image: bash:latest
           command: ["/bin/bash", "-c"] #Thank God this container comes with bash
           args:
             - |-
