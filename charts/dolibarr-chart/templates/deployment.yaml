@@ -181,6 +181,8 @@ spec:
           volumeMounts:
             - name: dolibarr-data
               mountPath: /var/www/html
+            - name: temp-data
+              mountPath: /data
       {{- end}}
       {{- with .Values.nodeSelector }}
       nodeSelector:
