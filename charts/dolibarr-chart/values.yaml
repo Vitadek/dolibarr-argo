@@ -4,20 +4,21 @@ replicaCount: 1
 keepAlive: true #pod will stay alive even after dolibarr crashes
 
 initContainers:
-  enabled: false # the initcontainer will run before the pod fully deploys. Can be turned off/on by setting false/false. Modify deployment.yaml for more granularity.
+  enabled: true # the initcontainer will run before the pod fully deploys. Can be turned off/on by setting false/false. Modify deployment.yaml for more granularity.
   command: |
     set -e 
     
     echo "initContainers is enabled. Starting file setup..."
-    echo "Downloading file to /data/dolibarr-html.tar.gz..."
-    wget -O /data/dolibarr-html.tar.gz https://github.com/Vitadek/dolibarr-argo/raw/refs/heads/main/data/var-www-html/dolibarr-html.tar.gz
-    
-    echo "Download successful. Extracting file into the shared /data volume..."
-    # Corrected the filename and the extraction path (-C /data)
-    tar -xvf /data/dolibarr-html.tar.gz -C /var/www/html/
+    #echo "Downloading file to /data/dolibarr-html.tar.gz..."
+    #wget -O /data/dolibarr-html.tar.gz https://github.com/Vitadek/dolibarr-argo/raw/refs/heads/main/data/var-www-html/dolibarr-html.tar.gz
+    #
+    #echo "Download successful. Extracting file into the shared /data volume..."
+    ## Corrected the filename and the extraction path (-C /data)
+    #tar -xvf /data/dolibarr-html.tar.gz -C /var/www/html/
 
-    echo "Extraction successful. Cleaning up archive..."
-    rm -f /data/dolibarr-html.tar.gz
+    #echo "Extraction successful. Cleaning up archive..."
+    #rm -f /data/dolibarr-html.tar.gz
+    mv /var/www/html/html /var/www/html
 
     echo "File setup complete. Exiting initContainer."
 
