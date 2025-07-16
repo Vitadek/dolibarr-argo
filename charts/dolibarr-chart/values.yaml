@@ -1,10 +1,10 @@
 
 replicaCount: 1
 
-keepAlive: true #pod will stay alive even after dolibarr crashes
+keepAlive: false #pod will stay alive even after dolibarr crashes
 
 initContainers:
-  enabled: true # the initcontainer will run before the pod fully deploys. Can be turned off/on by setting true/false. Modify deployment.yaml for more granularity.
+  enabled: false # the initcontainer will run before the pod fully deploys. Can be turned off/on by setting false/false. Modify deployment.yaml for more granularity.
   command: |
     set -e 
     
