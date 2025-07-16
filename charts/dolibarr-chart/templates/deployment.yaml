@@ -170,6 +170,9 @@ spec:
         - name: dolibarr-data
           persistentVolumeClaim:
             claimName: {{ include "dolibarr-chart.fullname" . }}-pvc
+        - name: temp-data
+          persistentVolumeClaim:
+            claimName: {{ include "dolibarr-chart.fullname" . }}-temp-data-pvc
       {{- if .Values.initContainers.enabled }}
       initContainers: 
         - name: var-www-html-setup
