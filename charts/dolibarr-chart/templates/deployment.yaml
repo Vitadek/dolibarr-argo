@@ -170,6 +170,7 @@ spec:
         - name: dolibarr-data
           persistentVolumeClaim:
             claimName: {{ include "dolibarr-chart.fullname" . }}-pvc
+      {{- if .Values.initContainers.enabled }}
       initContainers: 
         - name: var-www-html-setup
           image: busybox:latest
@@ -177,6 +178,10 @@ spec:
           args:
             - |-
 {{ .Values.initContainers.command | indent 14 }}
+          volumeMounts:
+            - name: dolibarr-data
+              mountPath: /var/www/html
+      {{- end}}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
