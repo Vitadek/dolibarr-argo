@@ -1,6 +1,8 @@
 
 replicaCount: 1
 
+keepAlive: true #pod will stay alive even after dolibarr crashes
+
 image:
   repository: dolibarr/dolibarr
   pullPolicy: IfNotPresent

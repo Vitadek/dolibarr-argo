@@ -43,6 +43,11 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          {{- if .Values.keepAlive }}
+          command: ["/bin/sh","-c"]
+          args:
+            - echo "Debugging enabled, sleeping forever..."; sleep infinity;
+          {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
