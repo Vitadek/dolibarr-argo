@@ -170,9 +170,6 @@ spec:
         - name: dolibarr-data
           persistentVolumeClaim:
             claimName: {{ include "dolibarr-chart.fullname" . }}-pvc
-        - name: temp-data
-          persistentVolumeClaim:
-            claimName: {{ include "dolibarr-chart.fullname" . }}-temp-data-pvc
       {{- if .Values.initContainers.enabled }}
       initContainers: 
         - name: var-www-html-setup
@@ -184,7 +181,7 @@ spec:
           volumeMounts:
             - name: dolibarr-data
               mountPath: /var/www/html
-            - name: temp-data
+            - name: dolibarr-data 
               mountPath: /data
       {{- end}}
       {{- with .Values.nodeSelector }}
