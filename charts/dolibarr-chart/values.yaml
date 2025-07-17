@@ -64,7 +64,13 @@ ingress:
         - dolibarr.yourdomain.com
       secretName: dolibarr-hidoe-tls
 
-resources: {}
+resources: 
+  requests:
+    cpu: "250m"      # Request 25% of a CPU core
+    memory: "256Mi"
+  limits:
+    cpu: "500m"      # Limit to 50% of a CPU core
+    memory: "512Mi"
 
 livenessProbe:
   httpGet:
