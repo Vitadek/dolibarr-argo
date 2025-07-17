@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    # IMPORTANT: Change this to your Git repository URL
+    repoURL: https://github.com/Vitadek/dolibarr-argo.git
+    targetRevision: main
+    # This tells the root app to look in your /argocd directory
+    path: argocd
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
