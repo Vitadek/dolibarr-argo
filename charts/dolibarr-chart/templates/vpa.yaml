@@ -1,0 +1,32 @@
+{{- if .Values.vpa.enabled -}}
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: {{ include "dolibarr-chart.fullname" . }}-vpa
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dolibarr-chart.labels" . | nindent 4 }}
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: {{ include "dolibarr-chart.fullname" . }} # This targets your Dolibarr Deployment
+  updatePolicy:
+    updateMode: {{ .Values.vpa.updateMode | quote }}
+  resourcePolicy:
+    containerPolicies:
+      - containerName: "*" # Apply to all containers in the pod, or specify Dolibarr's container name
+        {{- if .Values.vpa.minAllowed.cpu }}
+        minAllowed:
+          cpu: {{ .Values.vpa.minAllowed.cpu | quote }}
+          memory: {{ .Values.vpa.minAllowed.memory | quote }}
+        {{- end }}
+        {{- if .Values.vpa.maxAllowed.cpu }}
+        maxAllowed:
+          cpu: {{ .Values.vpa.maxAllowed.cpu | quote }}
+          memory: {{ .Values.vpa.maxAllowed.memory | quote }}
+        {{- end }}
+        controlledResources:
+          - "cpu"
+          - "memory"
+{{- end }}

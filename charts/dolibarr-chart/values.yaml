@@ -72,6 +72,21 @@ resources:
     cpu: "500m"      # Limit to 50% of a CPU core
     memory: "512Mi"
 
+vpa:
+  enabled: true # Set to true to enable VPA for Dolibarr
+  updateMode: "Off" # Initial recommended mode: "Off", "Initial", "Recreate", "Auto"
+  # Set minAllowed to prevent VPA from recommending resources below these values.
+  # Remove or comment out these lines if you don't want to set a minimum.
+  minAllowed:
+    cpu: 200m # Example: 0.2 CPU cores
+    memory: 512Mi # Example: 512 MiB
+  # Set maxAllowed to prevent VPA from recommending resources above these values.
+  # This is good for cost control or limiting resource consumption.
+  # Remove or comment out these lines if you don't want to set a maximum.
+  maxAllowed:
+    cpu: 2000m # Example: 2 CPU cores
+    memory: 4Gi # Example: 4 GiB
+
 livenessProbe:
   httpGet:
     path: /
