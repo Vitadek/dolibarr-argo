@@ -61,7 +61,7 @@ ingress:
           pathType: Prefix
   tls:
     - hosts:
-        - dolibarr.yourdomain.com
+        - dolibarr-hidoe.powerstech.dev
       secretName: dolibarr-hidoe-tls
 
 resources: 

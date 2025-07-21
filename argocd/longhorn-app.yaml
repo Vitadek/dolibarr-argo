@@ -40,4 +40,5 @@ spec:
     syncOptions:
       # This will create the 'longhorn-system' namespace if it doesn't exist
       - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
 
